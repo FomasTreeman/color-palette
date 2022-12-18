@@ -1,0 +1,46 @@
+body, ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+#title {
+    position: fixed;
+    margin: 0px;
+    font-size: 6vh;
+    top: 44vh;
+    left: calc(25vw + 10px);
+    --color: blue;
+    color: var(--color);
+}
+
+.container {
+    display: flex;
+    margin: 0px;
+}
+
+li {
+    width: 25vw;
+    height: 100vh;
+    list-style: none;
+}
+
+#one {
+    --color: blue;
+    background-color: var(--initial);
+    background-color: var(--color);
+}
+
+#two {
+    --color: red;
+    background-color: var(--color);
+}
+
+#three {
+    --color: yellow;
+    background-color: var(--color);
+}
+
+#four {
+    --color: green;
+    background-color: var(--color);
+}
