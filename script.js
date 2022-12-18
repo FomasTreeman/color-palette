@@ -1,4 +1,5 @@
 document.addEventListener("keypress", event => {if (event.code == "Space") {newColors()};});
+document.addEventListener("click", () => newColors());
 
 var randomIndex, colorChange;
 
