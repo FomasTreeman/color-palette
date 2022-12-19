@@ -3,6 +3,11 @@ body, ul {
     padding: 0px;
 }
 
+body * {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+
+}
+
 #title {
     position: fixed;
     margin: 0px;
@@ -11,6 +16,7 @@ body, ul {
     left: calc(25vw + 10px);
     --color: blue;
     color: var(--color);
+    max-width: 50vw;
 }
 
 #save {
@@ -23,6 +29,7 @@ body, ul {
     transition: transform .2s;
     --color: #ffff00;
     color: var(--color);
+    font-weight: bold;
 }
 
 #save:hover {

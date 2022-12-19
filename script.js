@@ -1,7 +1,6 @@
 document.addEventListener("keypress", event => { if (event.code == "Space") { newColors() }; });
 // problem when clicking on input field changes colour.
-// document.addEventListener("click", () => newColors());
-
+document.addEventListener("click", (event) => changeSpecificColour(event.pageX));
 var randomIndex, colorChange;
 var rgb, rgbTwo, rgbThree, rgbFour;
 
@@ -15,11 +14,16 @@ if (colors) {
     setColors(rgb.map((str) => parseInt(str)), rgbTwo.map((str) => parseInt(str)), rgbThree.map((str) => parseInt(str)), rgbFour.map((str) => parseInt(str)));
 }
 
-function newColors() {
-    var rgb = [];
+function randomColor() {
+    var rgb = [1, 2, 3];
     rgb[0] = Math.floor(Math.random() * 256);
     rgb[1] = Math.floor(Math.random() * 256);
     rgb[2] = Math.floor(Math.random() * 256);
+    return rgb;
+}
+
+function newColors() {
+    var rgb = randomColor()
     // current algorithm for finding satisfying colour combos.
     rgbTwo = rgb.map(color => (255 - color));
     rgbThree = similarColor(rgbTwo);
@@ -65,6 +69,25 @@ function updateColour(number) {
 
 function invertColour(rgb) {
     return rgb.map(colour => (255 - colour));
+}
+
+// click section to change its colour
+function changeSpecificColour(xCoord) {
+    windowWidth = document.documentElement.clientWidth;
+    var rgb = randomColor(); 
+    if (xCoord < (windowWidth / 4)) {
+        document.getElementById("one").style.setProperty("--color", "rgb(" + rgb + ")");
+        document.getElementById("hexValueOne").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+    } else if (xCoord < (windowWidth / 2)) {
+        document.getElementById("two").style.setProperty("--color", "rgb(" + rgb + ")");
+        document.getElementById("hexValueTwo").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+    } else if (xCoord < ((windowWidth / 4) * 3)) {
+        document.getElementById("three").style.setProperty("--color", "rgb(" + rgb + ")");
+        document.getElementById("hexValueThree").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+    } else {
+        document.getElementById("four").style.setProperty("--color", "rgb(" + rgb + ")");
+        document.getElementById("hexValueFour").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+    }
 }
 
 // function download() {
