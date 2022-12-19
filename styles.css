@@ -50,22 +50,18 @@ input {
 }
 
 #one {
-    --color: blue;
     background-color: var(--initial);
     background-color: var(--color);
 }
 
 #two {
-    --color: red;
     background-color: var(--color);
 }
 
 #three {
-    --color: #ffff00;
     background-color: var(--color);
 }
 
 #four {
-    --color: #008000;
     background-color: var(--color);
 }

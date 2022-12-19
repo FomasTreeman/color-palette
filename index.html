@@ -7,26 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color palette</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
 </head>
 
 <body>
     <h1 id="title">press space</h1>
-    <button id="save"> save </button>
-    <ul class="container">
-        <li id="one">
+    <button id="save" onclick="download()"> save </button>
+    <ul class=" container">
+        <li id="one" style="--color: blue;">
             <input id="hexValueOne" value="#0000ff" style="--color: #ffff00" onfocusout="updateColour('One')"> </input>
         </li>
-        <li id="two">
+        <li id="two" style="--color: red;">
             <input id="hexValueTwo" value="#ff00000" style="--color: #00ffff" onfocusout="updateColour('Two')"> </input>
         </li>
-        <li id="three">
-            <input id="hexValueThree" value="#ffff00" style="--color: #0000ff" onfocusout="updateColour('Three')"> </input>
+        <li id="three" style="--color: yellow;">
+            <input id="hexValueThree" value="#ffff00" style="--color: #0000ff" onfocusout="updateColour('Three')">
+            </input>
         </li>
-        <li id="four">
-            <input id="hexValueFour" value="#008000" style="--color: #ff8fff" onfocusout="updateColour('Four')"> </input>
+        <li id="four" style="--color: green;">
+            <input id="hexValueFour" value="#008000" style="--color: #ff8fff" onfocusout="updateColour('Four')">
+            </input>
         </li>
     </ul>
+    <script src="script.js"></script>
 </body>
 
 </html>
