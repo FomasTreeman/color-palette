@@ -9,5 +9,4 @@
 - 
 ## TODO:
 -------------------------
-- Save feature to export colours
 - Be able to swith between decimal rgb values and hex.
