@@ -4,6 +4,8 @@ document.addEventListener("click", (event) => changeSpecificColour(event.pageX))
 var randomIndex, colorChange;
 var rgb, rgbTwo, rgbThree, rgbFour;
 
+const HEX = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+
 var colors = localStorage.getItem('colors');
 if (colors) {
     var split = colors.split(';');
@@ -15,6 +17,7 @@ if (colors) {
 }
 
 function randomColor() {
+    // definitely can be simplified
     var rgb = [1, 2, 3];
     rgb[0] = Math.floor(Math.random() * 256);
     rgb[1] = Math.floor(Math.random() * 256);
@@ -37,14 +40,24 @@ function newColors() {
 function setColors(rgb, rgbTwo, rgbThree, rgbFour) {
     document.getElementById("one").style.setProperty("--color", "rgb(" + rgb + ")");
     document.getElementById("hexValueOne").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+    document.getElementById("hexValueOne").value = getHexValue(rgb);
     document.getElementById("title").style.setProperty("--color", "rgb(" + rgb + ")");
     document.getElementById("two").style.setProperty("--color", "rgb(" + rgbTwo + ")");
     document.getElementById("hexValueTwo").style.setProperty("--color", "rgb(" + invertColour(rgbTwo) + ")");
+    document.getElementById("hexValueTwo").value = getHexValue(rgbTwo);
     document.getElementById("three").style.setProperty("--color", "rgb(" + rgbThree + ")");
     document.getElementById("hexValueThree").style.setProperty("--color", "rgb(" + invertColour(rgbThree) + ")");
+    document.getElementById("hexValueThree").value = getHexValue(rgbThree);
     document.getElementById("save").style.setProperty("--color", "rgb(" + rgbThree + ")");
     document.getElementById("four").style.setProperty("--color", "rgb(" + rgbFour + ")");
     document.getElementById("hexValueFour").style.setProperty("--color", "rgb(" + invertColour(rgbFour) + ")");
+    document.getElementById("hexValueFour").value = getHexValue(rgbFour);
+}
+
+function getHexValue(rgb) {
+    var hexValue = "#";
+    rgb.forEach(decimal => hexValue += (HEX[(Math.floor(decimal / 16))]) + (HEX[(decimal % 16)]));
+    return hexValue;
 }
 
 function similarColor(rgb) {
@@ -74,29 +87,42 @@ function invertColour(rgb) {
 // click section to change its colour
 function changeSpecificColour(xCoord) {
     windowWidth = document.documentElement.clientWidth;
-    var rgb = randomColor(); 
+    var rgb = randomColor();
     if (xCoord < (windowWidth / 4)) {
         document.getElementById("one").style.setProperty("--color", "rgb(" + rgb + ")");
         document.getElementById("hexValueOne").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        document.getElementById("hexValueOne").value = getHexValue(rgb);
+
     } else if (xCoord < (windowWidth / 2)) {
         document.getElementById("two").style.setProperty("--color", "rgb(" + rgb + ")");
         document.getElementById("hexValueTwo").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        document.getElementById("hexValueTwo").value = getHexValue(rgb);
+
     } else if (xCoord < ((windowWidth / 4) * 3)) {
         document.getElementById("three").style.setProperty("--color", "rgb(" + rgb + ")");
         document.getElementById("hexValueThree").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        document.getElementById("hexValueThree").value = getHexValue(rgb);
+
     } else {
         document.getElementById("four").style.setProperty("--color", "rgb(" + rgb + ")");
         document.getElementById("hexValueFour").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        document.getElementById("hexValueFour").value = getHexValue(rgb);
+
     }
 }
 
-// function download() {
-//     var FileSaver = require(file-saver);
-//     // const link = document.createElement("a");
-//     const file = new Blob([rgb, ',', rgbTwo, ',',  rgbThree, ',',  rgbFour], { type: 'text/plain' });
-//     // link.href = URL.createObjectURL(file);
-//     // link.download = "sample.txt";
-//     // link.click();
-//     // URL.revokeObjectURL(link.href);
-//     FileSaver.saveAs(file, "colors.txt");
-// }
+// copied. so i annotate to show understanding
+// coudl be simplified by using a tag instead of button 
+function exportToJsonFile(jsonData) {
+    // turn object into string
+    let dataStr = JSON.stringify(jsonData);
+    let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    // i dont understand this yet but seemed to be what lots of people did. creating an link element
+    let linkElement = document.createElement('a');
+    // the file to install
+    linkElement.setAttribute('href', dataUri);
+    // download attribute specifies the href will be downloaded not be a new file to jump to
+    linkElement.setAttribute('download', "data.json");
+    // clicks this element so the user doesnt need to do anything else
+    linkElement.click();
+}

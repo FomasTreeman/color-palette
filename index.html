@@ -11,7 +11,7 @@
 
 <body>
     <h1 id="title">press space</h1>
-    <button id="save" onclick="download()"> save </button>
+    <button id="save" onclick="exportToJsonFile(localStorage.getItem('colors').split(';'))"> save </button>
     <ul class=" container">
         <li id="one" style="--color: blue;">
             <input id="hexValueOne" value="#0000ff" style="--color: #ffff00" onfocusout="updateColour('One')"> </input>
