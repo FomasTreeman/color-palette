@@ -3,9 +3,13 @@ body, ul {
     padding: 0px;
 }
 
-body * {
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+@font-face {
+    font-family: font;
+    src: url(AbrilFatface-Regular.ttf);
+  }
 
+body * {
+    font-family: font;
 }
 
 #title {

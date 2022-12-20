@@ -1,10 +1,18 @@
 document.addEventListener("keypress", event => { if (event.code == "Space") { newColors() }; });
 // problem when clicking on input field changes colour.
-document.addEventListener("click", (event) => changeSpecificColour(event.pageX));
-var randomIndex, colorChange;
-var rgb, rgbTwo, rgbThree, rgbFour;
+document.addEventListener("dblclick", (event) => changeSpecificColour(event.pageX));
 
-const HEX = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+const HEXCHARACTERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+var rgb, rgbTwo, rgbThree, rgbFour;
+var columnOne = document.getElementById("one");
+var columnTwo = document.getElementById("two");
+var columnThree = document.getElementById("three");
+var columnFour = document.getElementById("four");
+var hexOne = document.getElementById("hexValueOne");
+var hexTwo = document.getElementById("hexValueTwo");
+var hexThree = document.getElementById("hexValueThree");
+var hexFour = document.getElementById("hexValueFour");
+
 
 var colors = localStorage.getItem('colors');
 if (colors) {
@@ -38,33 +46,33 @@ function newColors() {
 }
 
 function setColors(rgb, rgbTwo, rgbThree, rgbFour) {
-    document.getElementById("one").style.setProperty("--color", "rgb(" + rgb + ")");
-    document.getElementById("hexValueOne").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
-    document.getElementById("hexValueOne").value = getHexValue(rgb);
+    columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
+    hexOne.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+    hexOne.value = getHexValue(rgb);
     document.getElementById("title").style.setProperty("--color", "rgb(" + rgb + ")");
-    document.getElementById("two").style.setProperty("--color", "rgb(" + rgbTwo + ")");
-    document.getElementById("hexValueTwo").style.setProperty("--color", "rgb(" + invertColour(rgbTwo) + ")");
-    document.getElementById("hexValueTwo").value = getHexValue(rgbTwo);
-    document.getElementById("three").style.setProperty("--color", "rgb(" + rgbThree + ")");
-    document.getElementById("hexValueThree").style.setProperty("--color", "rgb(" + invertColour(rgbThree) + ")");
-    document.getElementById("hexValueThree").value = getHexValue(rgbThree);
+    columnTwo.style.setProperty("--color", "rgb(" + rgbTwo + ")");
+    hexTwo.style.setProperty("--color", "rgb(" + invertColour(rgbTwo) + ")");
+    hexTwo.value = getHexValue(rgbTwo);
+    columnThree.style.setProperty("--color", "rgb(" + rgbThree + ")");
+    hexThree.style.setProperty("--color", "rgb(" + invertColour(rgbThree) + ")");
+    hexThree.value = getHexValue(rgbThree);
     document.getElementById("save").style.setProperty("--color", "rgb(" + rgbThree + ")");
-    document.getElementById("four").style.setProperty("--color", "rgb(" + rgbFour + ")");
-    document.getElementById("hexValueFour").style.setProperty("--color", "rgb(" + invertColour(rgbFour) + ")");
-    document.getElementById("hexValueFour").value = getHexValue(rgbFour);
+    columnFour.style.setProperty("--color", "rgb(" + rgbFour + ")");
+    hexFour.style.setProperty("--color", "rgb(" + invertColour(rgbFour) + ")");
+    hexFour.value = getHexValue(rgbFour);
 }
 
 function getHexValue(rgb) {
     var hexValue = "#";
-    rgb.forEach(decimal => hexValue += (HEX[(Math.floor(decimal / 16))]) + (HEX[(decimal % 16)]));
+    rgb.forEach(decimal => hexValue += (HEXCHARACTERS[(Math.floor(decimal / 16))]) + (HEXCHARACTERS[(decimal % 16)]));
     return hexValue;
 }
 
 function similarColor(rgb) {
-    colorChange = Math.floor(Math.random() * 91 + 31);
+    var colorChange = Math.floor(Math.random() * 91 + 31);
     var negOrPos = Math.random() < 0.5 ? -1 : 1;
     colorChange *= negOrPos;
-    randomIndex = Math.floor(Math.random() * 3);
+    var randomIndex = Math.floor(Math.random() * 3);
     var tempRgb = rgb.map(x => x);
     if ((rgb[randomIndex] + colorChange) < 0) {
         tempRgb[randomIndex] = 0;
@@ -77,7 +85,10 @@ function similarColor(rgb) {
 }
 
 function updateColour(number) {
-    document.getElementById(number.toLowerCase()).style.setProperty("--color", document.getElementById("hexValue" + number).value);
+    let hex = document.getElementById("hexValue" + number)
+    let column = document.getElementById(number.toLowerCase())
+    console.log(localStorage.getItem('colors').split(';')[0].split(','));
+    validateHex(hex.value) ? column.style.setProperty("--color", hex.value) : hex.value = getHexValue(localStorage.getItem('colors').split(';')[0].split(','));
 }
 
 function invertColour(rgb) {
@@ -88,27 +99,31 @@ function invertColour(rgb) {
 function changeSpecificColour(xCoord) {
     windowWidth = document.documentElement.clientWidth;
     var rgb = randomColor();
+
     if (xCoord < (windowWidth / 4)) {
-        document.getElementById("one").style.setProperty("--color", "rgb(" + rgb + ")");
-        document.getElementById("hexValueOne").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
-        document.getElementById("hexValueOne").value = getHexValue(rgb);
-
+        columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
+        hexOne.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        hexOne.value = getHexValue(rgb).toUpperCase();
     } else if (xCoord < (windowWidth / 2)) {
-        document.getElementById("two").style.setProperty("--color", "rgb(" + rgb + ")");
-        document.getElementById("hexValueTwo").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
-        document.getElementById("hexValueTwo").value = getHexValue(rgb);
-
+        columnTwo.style.setProperty("--color", "rgb(" + rgb + ")");
+        hexTwo.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        hexTwo.value = getHexValue(rgb).toUpperCase();
     } else if (xCoord < ((windowWidth / 4) * 3)) {
-        document.getElementById("three").style.setProperty("--color", "rgb(" + rgb + ")");
-        document.getElementById("hexValueThree").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
-        document.getElementById("hexValueThree").value = getHexValue(rgb);
-
+        columnThree.style.setProperty("--color", "rgb(" + rgb + ")");
+        hexThree.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        hexThree.value = getHexValue(rgb).toUpperCase();
     } else {
-        document.getElementById("four").style.setProperty("--color", "rgb(" + rgb + ")");
-        document.getElementById("hexValueFour").style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
-        document.getElementById("hexValueFour").value = getHexValue(rgb);
-
+        columnFour.style.setProperty("--color", "rgb(" + rgb + ")");
+        hexFour.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
+        hexFour.value = getHexValue(rgb).toUpperCase();
     }
+}
+
+function validateHex(hex) {
+    if (hex.length != 7 ) return false;
+    for (let char of hex.substring(1)) {
+        if (!HEXCHARACTERS.some((possibleChar) => char === possibleChar)) return false;
+    } 
 }
 
 // copied. so i annotate to show understanding
@@ -117,7 +132,6 @@ function exportToJsonFile(jsonData) {
     // turn object into string
     let dataStr = JSON.stringify(jsonData);
     let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-    // i dont understand this yet but seemed to be what lots of people did. creating an link element
     let linkElement = document.createElement('a');
     // the file to install
     linkElement.setAttribute('href', dataUri);
