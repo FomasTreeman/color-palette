@@ -1,6 +1,6 @@
 document.addEventListener("keypress", event => { if (event.code == "Space") { newColors() }; });
 // problem when clicking on input field changes colour.
-document.addEventListener("dblclick", (event) => changeSpecificColour(event.pageX));
+document.addEventListener("dblclick", (event) => changeSpecificColour(event.pageX, event.pageY));
 
 const HEXCHARACTERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
 var rgb, rgbTwo, rgbThree, rgbFour;
@@ -140,19 +140,27 @@ function invertColour(rgb) {
 }
 
 // click section to change its colour
-function changeSpecificColour(xCoord) {
-    windowWidth = document.documentElement.clientWidth;
+function changeSpecificColour(xCoord, yCoord) {
+    console.log(xCoord, yCoord)
     var rgb = randomColor();
+    var coord;
+    if (matchMedia("(max-width: 700px)").matches) {
+        coord = yCoord
+        max = document.documentElement.clientHeight;
+    } else { 
+        coord = xCoord;
+        max = document.documentElement.clientWidth;
+    }
 
-    if (xCoord < (windowWidth / 4)) {
+    if (coord < (max / 4)) {
         columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
         hexOne.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexOne.value = getHexValue(rgb).toUpperCase();
-    } else if (xCoord < (windowWidth / 2)) {
+    } else if (coord < (max / 2)) {
         columnTwo.style.setProperty("--color", "rgb(" + rgb + ")");
         hexTwo.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexTwo.value = getHexValue(rgb).toUpperCase();
-    } else if (xCoord < ((windowWidth / 4) * 3)) {
+    } else if (coord < ((max / 4) * 3)) {
         columnThree.style.setProperty("--color", "rgb(" + rgb + ")");
         hexThree.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexThree.value = getHexValue(rgb).toUpperCase();
