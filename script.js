@@ -23,6 +23,8 @@ if (colors) {
     rgbFour = split[3].split(',');
     setColors(rgb.map((str) => parseInt(str)), rgbTwo.map((str) => parseInt(str)), rgbThree.map((str) => parseInt(str)), rgbFour.map((str) => parseInt(str)));
 }
+var x = matchMedia("(max-width: 700px)")
+if (x.matches) document.getElementById("title").innerText = "press me";
 
 function randomColor() {
     // definitely can be simplified
@@ -44,10 +46,10 @@ function newColors() {
     rgbFour = similarColor(rgbFour);
     array = [rgb, rgbTwo, rgbThree, rgbFour];
     orderedIndexes = sortColors([
-        {0: rgb.reduce((acc, currentValue) => acc + currentValue)}, 
-        {1: rgbTwo.reduce((acc, currentValue) => acc + currentValue)}, 
-        {2: rgbThree.reduce((acc, currentValue) => acc + currentValue)}, 
-        {3: rgbFour.reduce((acc, currentValue) => acc + currentValue)}
+        { 0: rgb.reduce((acc, currentValue) => acc + currentValue) },
+        { 1: rgbTwo.reduce((acc, currentValue) => acc + currentValue) },
+        { 2: rgbThree.reduce((acc, currentValue) => acc + currentValue) },
+        { 3: rgbFour.reduce((acc, currentValue) => acc + currentValue) }
     ]);
     // setColors(orderedIndexes.forEach((index) => {return array[index]}));
     setColors(array[orderedIndexes[0]], array[orderedIndexes[1]], array[orderedIndexes[2]], array[orderedIndexes[3]]);
@@ -78,10 +80,10 @@ function newColors() {
 //   };
 
 function sortColors(colors) {
-    for(let i = 0; i < colors.length; i++){
-            for(let j = 0; j < colors.length - i - 1; j++){
-            if(Object.values(colors[j + 1])[0] > Object.values(colors[j])[0] ){
-                    [colors[j + 1],colors[j]] = [colors[j],colors[j + 1]]
+    for (let i = 0; i < colors.length; i++) {
+        for (let j = 0; j < colors.length - i - 1; j++) {
+            if (Object.values(colors[j + 1])[0] > Object.values(colors[j])[0]) {
+                [colors[j + 1], colors[j]] = [colors[j], colors[j + 1]]
             }
         }
     };
@@ -89,7 +91,7 @@ function sortColors(colors) {
 }
 
 function setColors(rgb, rgbTwo, rgbThree, rgbFour) {
-     columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
+    columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
     hexOne.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
     hexOne.value = getHexValue(rgb);
     document.getElementById("title").style.setProperty("--color", "rgb(" + rgb + ")");
@@ -162,11 +164,11 @@ function changeSpecificColour(xCoord) {
 }
 
 function validateHex(hex) {
-    if (hex.length != 7 ) return false;
+    if (hex.length != 7) return false;
     for (var char of hex.substring(1)) {
-        if (!HEXCHARACTERS.some((possibleChar) => char.toUpperCase() === possibleChar)) {console.log("fail"); return false};
+        if (!HEXCHARACTERS.some((possibleChar) => char.toUpperCase() === possibleChar)) { console.log("fail"); return false };
     }
-    return true; 
+    return true;
 }
 
 // copied. so i annotate to show understanding

@@ -23,11 +23,14 @@ body * {
     max-width: 50vw;
 }
 
+button {
+    background-color: transparent;
+    border: none;
+}
+
 #save {
     position: fixed;
     top: 44vh;
-    background-color: transparent;
-    border: none;
     font-size: 6vh;
     left: calc(75vw + 10px);
     transition: transform .2s;
@@ -75,4 +78,23 @@ input {
 
 #four {
     background-color: var(--color);
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        flex-direction: column;
+    }
+    li {
+        width: 100vw;
+        height: 25vh;
+    }
+    #save {
+        left: 60vw;
+    }
+    #title {
+        top: 30vh;
+        left: calc(50vw - 70.5px);
+        font-size: xx-large;
+        
+    }
 }
