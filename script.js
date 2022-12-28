@@ -173,8 +173,8 @@ function validateHex(hex) {
 
 function lockColor(column) {
     let current = eval('lock' + column);
-    let path = 'http://127.0.0.1:5500/';
-    let pagesPath = 'https://fomastreeman.github.io/color-palette/';
+    let devPath = 'http://127.0.0.1:5500/';
+    let path = 'https://fomastreeman.github.io/color-palette/';
     current.src == path +'locked.png' ? current.src = path + 'unlocked.png' : current.src = path + 'locked.png'; 
 
 }
