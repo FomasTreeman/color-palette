@@ -63,6 +63,34 @@ input {
     color: var(--color);
 }
 
+.inputContainer {
+    position: relative;
+
+}
+
+.hexValue {
+    max-width: 25vw;
+}
+
+.lock {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.colorPicker {
+    position: absolute;
+    top: 0px;
+    right: 35px;
+    border-style:groove;
+    border-color: black;
+    border-width: 2px;
+    border-radius: 5px;
+    width: 25px;
+    height: 25px; 
+
+}
+
 #one {
     background-color: var(--initial);
     background-color: var(--color);
@@ -96,5 +124,14 @@ input {
         left: calc(50vw - 70.5px);
         font-size: xx-large;
         
+    }
+    .inputContainer {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .hexValue {
+        position: absolute;
+        left: 0px;
     }
 }

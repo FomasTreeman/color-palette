@@ -1,6 +1,6 @@
 document.addEventListener("keypress", event => { if (event.code == "Space") { newColors() }; });
 // problem when clicking on input field changes colour.
-document.addEventListener("dblclick", (event) => changeSpecificColour(event.pageX, event.pageY));
+document.addEventListener("dblclick", (event) => changeClickedColour(event.pageX, event.pageY));
 
 const HEXCHARACTERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
 var rgb, rgbTwo, rgbThree, rgbFour;
@@ -12,6 +12,10 @@ var hexOne = document.getElementById("hexValueOne");
 var hexTwo = document.getElementById("hexValueTwo");
 var hexThree = document.getElementById("hexValueThree");
 var hexFour = document.getElementById("hexValueFour");
+var colorPickerOne = document.getElementById("colorPickerOne");
+var colorPickerTwo = document.getElementById("colorPickerTwo");
+var colorPickerThree = document.getElementById("colorPickerThree");
+var colorPickerFour = document.getElementById("colorPickerFour");
 
 
 var colors = localStorage.getItem('colors');
@@ -39,11 +43,10 @@ function newColors() {
     // order colors brigthness
     var rgb = randomColor()
     // current algorithm for finding satisfying colour combos.
-    rgbTwo = rgb.map(color => (255 - color));
+    rgbTwo = invertColour(rgb);
     rgbThree = similarColor(rgbTwo);
-    rgbThree = similarColor(rgbThree);
     rgbFour = similarColor(rgbTwo);
-    rgbFour = similarColor(rgbFour);
+    if (rgbThree.reduce((acc, currentValue) => acc + currentValue) == rgbFour.reduce((acc, currentValue) => acc + currentValue)) rgbFour = similarColor(rgbTwo);
     array = [rgb, rgbTwo, rgbThree, rgbFour];
     orderedIndexes = sortColors([
         { 0: rgb.reduce((acc, currentValue) => acc + currentValue) },
@@ -56,29 +59,6 @@ function newColors() {
     localStorage.setItem('colors', rgb + ';' + rgbTwo + ';' + rgbThree + ';' + rgbFour);
 }
 
-// copied algorithm
-// possibility for better color sorting, rgb sort isnt very pleasing to the eye.
-
-// function RGBToHSL(r, g, b) {
-//     r /= 255;
-//     g /= 255;
-//     b /= 255;
-//     const l = Math.max(r, g, b);
-//     const s = l - Math.min(r, g, b);
-//     const h = s
-//       ? l === r
-//         ? (g - b) / s
-//         : l === g
-//         ? 2 + (b - r) / s
-//         : 4 + (r - g) / s
-//       : 0;
-//     return [
-//       60 * h < 0 ? 60 * h + 360 : 60 * h,
-//       100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0),
-//       (100 * (2 * l - s)) / 2,
-//     ];
-//   };
-
 function sortColors(colors) {
     for (let i = 0; i < colors.length; i++) {
         for (let j = 0; j < colors.length - i - 1; j++) {
@@ -90,21 +70,24 @@ function sortColors(colors) {
     return colors.map((object) => parseInt(Object.keys(object)[0]))
 }
 
+function changeColumn(number, colorValue) {
+    let column = eval('column' + number);
+    let hex = eval('hex' + number);
+    let colorPicker = eval('colorPicker' + number);
+    if (typeof colorValue == 'object') colorValue = getHexValue(colorValue); 
+    column.style.setProperty("--color",  colorValue);
+    hex.style.setProperty("--color", "rgb(" + invertColour(getRgbValue(colorValue)) + ")");
+    hex.value = colorValue;
+    colorPicker.value = colorValue;
+}
+
 function setColors(rgb, rgbTwo, rgbThree, rgbFour) {
-    columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
-    hexOne.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
-    hexOne.value = getHexValue(rgb);
+    changeColumn('One', rgb);
+    changeColumn('Two', rgbTwo);
+    changeColumn('Three', rgbThree);
+    changeColumn('Four', rgbFour);
     document.getElementById("title").style.setProperty("--color", "rgb(" + rgb + ")");
-    columnTwo.style.setProperty("--color", "rgb(" + rgbTwo + ")");
-    hexTwo.style.setProperty("--color", "rgb(" + invertColour(rgbTwo) + ")");
-    hexTwo.value = getHexValue(rgbTwo);
-    columnThree.style.setProperty("--color", "rgb(" + rgbThree + ")");
-    hexThree.style.setProperty("--color", "rgb(" + invertColour(rgbThree) + ")");
-    hexThree.value = getHexValue(rgbThree);
     document.getElementById("save").style.setProperty("--color", "rgb(" + rgbThree + ")");
-    columnFour.style.setProperty("--color", "rgb(" + rgbFour + ")");
-    hexFour.style.setProperty("--color", "rgb(" + invertColour(rgbFour) + ")");
-    hexFour.value = getHexValue(rgbFour);
 }
 
 function getHexValue(rgb) {
@@ -113,8 +96,17 @@ function getHexValue(rgb) {
     return hexValue;
 }
 
+function getRgbValue(hex) {
+    let rgb = [];
+    hex = hex.slice(1);
+    for (let i = 0; i < 5; i+=2) {
+        rgb.push(((HEXCHARACTERS.findIndex((char) => char == hex[i].toUpperCase()) * 16) + HEXCHARACTERS.findIndex((char) => char == hex[i + 1].toUpperCase())));
+    }
+    return rgb;
+}
+
 function similarColor(rgb) {
-    var colorChange = Math.floor(Math.random() * 91 + 31);
+    var colorChange = Math.floor(Math.random() * 125 + 70);
     var negOrPos = Math.random() < 0.5 ? -1 : 1;
     colorChange *= negOrPos;
     var randomIndex = Math.floor(Math.random() * 3);
@@ -140,7 +132,7 @@ function invertColour(rgb) {
 }
 
 // click section to change its colour
-function changeSpecificColour(xCoord, yCoord) {
+function changeClickedColour(xCoord, yCoord) {
     console.log(xCoord, yCoord)
     var rgb = randomColor();
     var coord;
@@ -178,6 +170,15 @@ function validateHex(hex) {
     }
     return true;
 }
+
+function lockColor(column) {
+    let current = eval('lock' + column);
+    let path = 'http://127.0.0.1:5500/';
+    let pagesPath = 'https://fomastreeman.github.io/color-palette/';
+    current.src == path +'locked.png' ? current.src = path + 'unlocked.png' : current.src = path + 'locked.png'; 
+
+}
+
 
 // copied. so i annotate to show understanding
 // coudl be simplified by using a tag instead of button 

@@ -14,18 +14,36 @@
     <button id="save" onclick="exportToJsonFile(localStorage.getItem('colors').split(';'))"> save </button>
     <ul class=" container">
         <li id="one" style="--color: blue;">
-            <input id="hexValueOne" value="#0000ff" style="--color: #ffff00" onfocusout="updateColour('One')"> </input>
+            <div class="inputContainer">
+                <input class="hexValue" id="hexValueOne" value="#0000ff" style="--color: #ffff00"
+                    onfocusout="updateColour('One')"> </input>
+                <input class="colorPicker" id="colorPickerOne" type="color" value="#0000ff" onchange="changeColumn('One', event.target.value)"/>
+                <input class="lock" id="lockOne" type="image" src="unlocked.png" onclick="lockColor('One')" />
+            </div>
         </li>
         <li id="two" style="--color: red;">
-            <input id="hexValueTwo" value="#ff00000" style="--color: #00ffff" onfocusout="updateColour('Two')"> </input>
+            <div class="inputContainer">
+                <input class="hexValue" id="hexValueTwo" value="#ff00000" style="--color: #00ffff"
+                    onfocusout="updateColour('Two')"> </input>
+                <input class="colorPicker" id="colorPickerTwo" type="color" value="#ff0000" onchange="changeColumn('Two', event.target.value)"/>
+                <input class="lock" id="lockTwo" type="image" src="unlocked.png" onclick="lockColor('Two')" />
+            </div>
         </li>
         <li id="three" style="--color: yellow;">
-            <input id="hexValueThree" value="#ffff00" style="--color: #0000ff" onfocusout="updateColour('Three')">
-            </input>
+            <div class="inputContainer">
+                <input class="hexValue" id="hexValueThree" value="#ffff00" style="--color: #0000ff"
+                    onfocusout="updateColour('Three')"></input>
+                <input class="colorPicker" id="colorPickerThree" type="color" value="#ffff00" onchange="changeColumn('Three', event.target.value)" />
+                <input class="lock" id="lockThree" type="image" src="unlocked.png" onclick="lockColor('Three')" />
+            </div>
         </li>
         <li id="four" style="--color: green;">
-            <input id="hexValueFour" value="#008000" style="--color: #ff8fff" onfocusout="updateColour('Four')">
-            </input>
+            <div class="inputContainer">
+                <input class="hexValue" id="hexValueFour" value="#008000" style="--color: #ff8fff"
+                    onfocusout="updateColour('Four')"></input>
+                <input class="colorPicker" id="colorPickerFour" type="color" value="#008000" onchange="changeColumn('Four', event.target.value)"/>
+                <input class="lock" id="lockFour" type="image" src="unlocked.png" onclick="lockColor('Four')" />
+            </div>
         </li>
     </ul>
     <script src="script.js"></script>
