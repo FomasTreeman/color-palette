@@ -172,11 +172,19 @@ function validateHex(hex) {
 }
 
 function lockColor(column) {
-    let current = eval('lock' + column);
-    let devPath = 'http://127.0.0.1:5500/';
-    let path = 'https://fomastreeman.github.io/color-palette/';
-    current.src == path +'locked.png' ? current.src = path + 'unlocked.png' : current.src = path + 'locked.png'; 
-
+    let currentLock = eval('lock' + column);
+    let currentColumn = eval('column' + column);
+    let currentHex = eval('hex' + column);
+    let path = 'http://127.0.0.1:5500/';
+    // let path = 'https://fomastreeman.github.io/color-palette/';
+    console.log(currentHex.value);
+    if (currentLock.src == path +'locked.png') {
+        currentLock.src = path + 'unlocked.png'; 
+        currentColumn.style.setProperty('background-color', 'var(--color)');
+    } else {
+        currentLock.src = path + 'locked.png'; 
+        currentColumn.style.setProperty('background-color', currentHex.value);
+    } 
 }
 
 
