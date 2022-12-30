@@ -3,7 +3,6 @@ document.addEventListener("keypress", event => { if (event.code == "Space") { ne
 document.addEventListener("dblclick", (event) => changeClickedColour(event.pageX, event.pageY));
 
 const HEXCHARACTERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
-var rgb, rgbTwo, rgbThree, rgbFour;
 var columnOne = document.getElementById("one");
 var columnTwo = document.getElementById("two");
 var columnThree = document.getElementById("three");
@@ -16,78 +15,120 @@ var colorPickerOne = document.getElementById("colorPickerOne");
 var colorPickerTwo = document.getElementById("colorPickerTwo");
 var colorPickerThree = document.getElementById("colorPickerThree");
 var colorPickerFour = document.getElementById("colorPickerFour");
-
-
+var columnValues = { 'One': [], 'Two': [], 'Three': [], 'Four': [] };
+var lockedColumns = [];
 var colors = localStorage.getItem('colors');
+
 if (colors) {
-    var split = colors.split(';');
-    rgb = split[0].split(',');
-    rgbTwo = split[1].split(',');
-    rgbThree = split[2].split(',');
-    rgbFour = split[3].split(',');
-    setColors(rgb.map((str) => parseInt(str)), rgbTwo.map((str) => parseInt(str)), rgbThree.map((str) => parseInt(str)), rgbFour.map((str) => parseInt(str)));
+    let i = 0;
+    for (column in columnValues) {
+        columnValues[column] = colors.split(';')[i].split(',').map((value) => parseInt(value));
+        i ++;
+    }
+    setColors(columnValues);
 }
-var x = matchMedia("(max-width: 700px)")
-if (x.matches) document.getElementById("title").innerText = "press me";
+if (matchMedia("(max-width: 700px)").matches) document.getElementById("title").innerText = "press me";
 
 function randomColor() {
     // definitely can be simplified
-    var rgb = [1, 2, 3];
-    rgb[0] = Math.floor(Math.random() * 256);
-    rgb[1] = Math.floor(Math.random() * 256);
-    rgb[2] = Math.floor(Math.random() * 256);
+    var rgb = [];
+    for (index in [0, 1, 2]) rgb[index] = Math.floor(Math.random() * 256);
+    console.log(rgb);
     return rgb;
 }
 
 function newColors() {
-    // order colors brigthness
-    var rgb = randomColor()
     // current algorithm for finding satisfying colour combos.
-    rgbTwo = invertColour(rgb);
-    rgbThree = similarColor(rgbTwo);
-    rgbFour = similarColor(rgbTwo);
-    if (rgbThree.reduce((acc, currentValue) => acc + currentValue) == rgbFour.reduce((acc, currentValue) => acc + currentValue)) rgbFour = similarColor(rgbTwo);
-    array = [rgb, rgbTwo, rgbThree, rgbFour];
-    orderedIndexes = sortColors([
-        { 0: rgb.reduce((acc, currentValue) => acc + currentValue) },
-        { 1: rgbTwo.reduce((acc, currentValue) => acc + currentValue) },
-        { 2: rgbThree.reduce((acc, currentValue) => acc + currentValue) },
-        { 3: rgbFour.reduce((acc, currentValue) => acc + currentValue) }
-    ]);
-    // setColors(orderedIndexes.forEach((index) => {return array[index]}));
-    setColors(array[orderedIndexes[0]], array[orderedIndexes[1]], array[orderedIndexes[2]], array[orderedIndexes[3]]);
-    localStorage.setItem('colors', rgb + ';' + rgbTwo + ';' + rgbThree + ';' + rgbFour);
-}
+    let unlockedColumns = Object.keys(columnValues).filter((column) => !lockedColumns.includes(column));
+    // if (lockedColumns.length > 0) var newStartingColour = colors.split(';')[Object.keys(columnValues).findIndex((column) => lockedColumns[0] == column)].split(',').map((value) => parseInt(value));
+    if (lockedColumns.length > 0) var newStartingColour = columnValues[lockedColumns[0]];
+    if (lockedColumns.length == 0) {
+        columnValues['One'] = randomColor();
+        columnValues['Two'] = invertColour(columnValues['One']);
+        columnValues['Three'] = similarColor(columnValues['Two']);
+        columnValues['Four'] = similarColor(columnValues['Two']);
+        if (columnValues['Three'].reduce((acc, currentValue) => acc + currentValue) == columnValues['Four'].reduce((acc, currentValue) => acc + currentValue)) {
+            columnValues['Four'] = similarColor(columnValues['Two'])
+        };
+    } else if (lockedColumns.length == 1) {
+        columnValues[unlockedColumns[0]] = similarColor(invertColour(newStartingColour));
+        columnValues[unlockedColumns[1]] = similarColor(columnValues[unlockedColumns[0]]);
+        columnValues[unlockedColumns[2]] = similarColor(columnValues[unlockedColumns[0]]);
+        if (columnValues[unlockedColumns[1]].reduce((acc, currentValue) => acc + currentValue) == columnValues[unlockedColumns[2]].reduce((acc, currentValue) => acc + currentValue)) {
+            columnValues[unlockedColumns[2]] = similarColor(columnValues[unlockedColumns[0]])
+        };
+    } else if (lockedColumns.length == 2) {
+        columnValues[unlockedColumns[0]] = similarColor(newStartingColour);
+        columnValues[unlockedColumns[1]] = similarColor(newStartingColour);
+        if (columnValues[unlockedColumns[1]].reduce((acc, currentValue) => acc + currentValue) == columnValues[unlockedColumns[0]].reduce((acc, currentValue) => acc + currentValue)) {
+            columnValues[unlockedColumns[1]] = similarColor(newStartingColour)
+        };
+    } else if (lockedColumns.length == 3) {
+        columnValues[unlockedColumns[0]] = similarColor(newStartingColour);
+    };
+    // order colors brigthness
+    let brightnesss = Object.values(columnValues).map((value) => {
+        if (typeof value[0] != 'string') {
+            return value.reduce((acc, currentValue) => acc + currentValue);
+        }
+    });
+    let brightnessDictionary = [
+        { 'One': brightnesss[0] },
+        { 'Two': brightnesss[1] },
+        { 'Three': brightnesss[2] },
+        { 'Four': brightnesss[3] }
+    ]
+    // let desiredFormat = {
+    //     'One': brightnesss[0],
+    //     'Two': brightnesss[1],
+    //     'Three': brightnesss[2],
+    //     'Four': brightnesss[3]
+    // }
+    orderedIndexes = sortColors(brightnessDictionary);
+    let listNewColors = {};
+    for (object of brightnessDictionary) {
+        let column = Object.keys(object)[0];
+        listNewColors[column] = columnValues[column];
+    }
+    for (column of ['One', 'Two', 'Three', 'Four']) {
+        if (typeof listNewColors[column] == 'object') listNewColors[column] = columnValues[column];
+    }
+    setColors(listNewColors);
+    localStorage.setItem('colors', columnValues['One'] + ';' + columnValues['Two'] + ';' + columnValues['Three'] + ';' + columnValues['Four']);
+};
 
 function sortColors(colors) {
     for (let i = 0; i < colors.length; i++) {
-        for (let j = 0; j < colors.length - i - 1; j++) {
-            if (Object.values(colors[j + 1])[0] > Object.values(colors[j])[0]) {
-                [colors[j + 1], colors[j]] = [colors[j], colors[j + 1]]
+        if (!lockedColumns.includes(colors[i])) {
+            for (let j = 0; j < colors.length - i - 1; j++) {
+                if (Object.values(colors[j + 1])[0] > Object.values(colors[j])[0] || !lockedColumns.includes(colors[j + 1])) {
+                    [colors[j + 1], colors[j]] = [colors[j], colors[j + 1]]
+                }
             }
         }
     };
-    return colors.map((object) => parseInt(Object.keys(object)[0]))
+    return colors.map((object) => Object.keys(object)[0]);
 }
 
 function changeColumn(number, colorValue) {
     let column = eval('column' + number);
     let hex = eval('hex' + number);
     let colorPicker = eval('colorPicker' + number);
-    if (typeof colorValue == 'object') colorValue = getHexValue(colorValue); 
-    column.style.setProperty("--color",  colorValue);
+    if (typeof colorValue == 'object') colorValue = getHexValue(colorValue);
+    column.style.setProperty("--color", colorValue);
     hex.style.setProperty("--color", "rgb(" + invertColour(getRgbValue(colorValue)) + ")");
     hex.value = colorValue;
     colorPicker.value = colorValue;
+    columnValues[number] = getRgbValue(colorValue);
 }
 
-function setColors(rgb, rgbTwo, rgbThree, rgbFour) {
-    changeColumn('One', rgb);
-    changeColumn('Two', rgbTwo);
-    changeColumn('Three', rgbThree);
-    changeColumn('Four', rgbFour);
-    document.getElementById("title").style.setProperty("--color", "rgb(" + rgb + ")");
-    document.getElementById("save").style.setProperty("--color", "rgb(" + rgbThree + ")");
+function setColors(listNewColors) {
+    // listNewColors.forEach((newColor) => { console.log(typeof newColor); if (typeof newColor == 'object') if (typeof newColor == 'object')Object.keys(newColor)[0], Object.values(newColor)[0]) });
+    for (let newColor in listNewColors) {
+        if (typeof listNewColors[newColor] == 'object') changeColumn(newColor, listNewColors[newColor]);
+    }
+    document.getElementById("title").style.setProperty("--color", "rgb(" + columnValues['One'] + ")");
+    document.getElementById("save").style.setProperty("--color", "rgb(" + columnValues['Three'] + ")");
 }
 
 function getHexValue(rgb) {
@@ -99,7 +140,7 @@ function getHexValue(rgb) {
 function getRgbValue(hex) {
     let rgb = [];
     hex = hex.slice(1);
-    for (let i = 0; i < 5; i+=2) {
+    for (let i = 0; i < 5; i += 2) {
         rgb.push(((HEXCHARACTERS.findIndex((char) => char == hex[i].toUpperCase()) * 16) + HEXCHARACTERS.findIndex((char) => char == hex[i + 1].toUpperCase())));
     }
     return rgb;
@@ -139,7 +180,7 @@ function changeClickedColour(xCoord, yCoord) {
     if (matchMedia("(max-width: 700px)").matches) {
         coord = yCoord
         max = document.documentElement.clientHeight;
-    } else { 
+    } else {
         coord = xCoord;
         max = document.documentElement.clientWidth;
     }
@@ -148,18 +189,22 @@ function changeClickedColour(xCoord, yCoord) {
         columnOne.style.setProperty("--color", "rgb(" + rgb + ")");
         hexOne.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexOne.value = getHexValue(rgb).toUpperCase();
+        columnValues['One'] = rgb;
     } else if (coord < (max / 2)) {
         columnTwo.style.setProperty("--color", "rgb(" + rgb + ")");
         hexTwo.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexTwo.value = getHexValue(rgb).toUpperCase();
+        columnValues['Two'] = rgb;
     } else if (coord < ((max / 4) * 3)) {
         columnThree.style.setProperty("--color", "rgb(" + rgb + ")");
         hexThree.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexThree.value = getHexValue(rgb).toUpperCase();
+        columnValues['Three'] = rgb;
     } else {
         columnFour.style.setProperty("--color", "rgb(" + rgb + ")");
         hexFour.style.setProperty("--color", "rgb(" + invertColour(rgb) + ")");
         hexFour.value = getHexValue(rgb).toUpperCase();
+        columnValues['Four'] = rgb;
     }
 }
 
@@ -173,20 +218,20 @@ function validateHex(hex) {
 
 function lockColor(column) {
     let currentLock = eval('lock' + column);
-    let currentColumn = eval('column' + column);
-    let currentHex = eval('hex' + column);
+    // let currentColumn = eval('column' + column);
+    // let currentHex = eval('hex' + column);
     let path = 'http://127.0.0.1:5500/';
     // let path = 'https://fomastreeman.github.io/color-palette/';
-    console.log(currentHex.value);
-    if (currentLock.src == path +'locked.png') {
-        currentLock.src = path + 'unlocked.png'; 
-        currentColumn.style.setProperty('background-color', 'var(--color)');
+    if (currentLock.src == path + 'locked.png') {
+        currentLock.src = path + 'unlocked.png';
+        lockedColumns = lockedColumns.filter((item) => item != column);
+        // currentColumn.style.setProperty('background-color', 'var(--color)');
     } else {
-        currentLock.src = path + 'locked.png'; 
-        currentColumn.style.setProperty('background-color', currentHex.value);
-    } 
+        currentLock.src = path + 'locked.png';
+        lockedColumns.push(column);
+        // currentColumn.style.setProperty('background-color', currentHex.value);
+    }
 }
-
 
 // copied. so i annotate to show understanding
 // coudl be simplified by using a tag instead of button 
