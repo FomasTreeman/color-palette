@@ -10,6 +10,8 @@ body, ul {
 
 body * {
     font-family: font;
+    text-shadow: -1px -1px 0 rgb(82, 82, 82);
+
 }
 
 #navbar {
@@ -82,7 +84,6 @@ input {
     width: 23.5vw;
     margin-inline: 0px;
     padding-left: 1.5vw;
-    text-shadow: -1px -1px 0 #000;
 }
 
 .lock {

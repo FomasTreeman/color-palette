@@ -1,8 +1,9 @@
 document.addEventListener("keypress", event => { if (event.code == "Space") { newColors() }; });
-// problem when clicking on input field changes colour.
+// document.addEventListener("keypress", event => { if (event.code == "Enter") { history.back() }; });
 document.addEventListener("dblclick", (event) => changeClickedColour(event.pageX, event.pageY));
 
 const HEXCHARACTERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+// const url = new URL('http://127.0.0.1:5500/index.html');
 var columnOne = document.getElementById("one");
 var columnTwo = document.getElementById("two");
 var columnThree = document.getElementById("three");
@@ -11,10 +12,6 @@ var hexOne = document.getElementById("hexValueOne");
 var hexTwo = document.getElementById("hexValueTwo");
 var hexThree = document.getElementById("hexValueThree");
 var hexFour = document.getElementById("hexValueFour");
-// var colorPickerOne = document.getElementById("colorPickerOne");
-// var colorPickerTwo = document.getElementById("colorPickerTwo");
-// var colorPickerThree = document.getElementById("colorPickerThree");
-// var colorPickerFour = document.getElementById("colorPickerFour");
 var columnValues = { 'One': [], 'Two': [], 'Three': [], 'Four': [] };
 var lockedColumns = [];
 var colors = localStorage.getItem('colors');
@@ -30,10 +27,8 @@ if (colors) {
 if (matchMedia("(max-width: 700px)").matches) document.getElementById("title").innerText = "press me";
 
 function randomColor() {
-    // definitely can be simplified
     var rgb = [];
     for (let index in [0, 1, 2]) rgb[index] = Math.floor(Math.random() * 256);
-    console.log(rgb);
     return rgb;
 }
 
@@ -60,7 +55,6 @@ function rgbToLab(rgb) {
 }
 
 function organiseColors() {
-    // console.log({ L: rgbToLab(columnValues['One'])[0], A: rgbToLab(columnValues['One'])[1], B: rgbToLab(columnValues['One'])[2] });
     var relationshipArray = {
         'a': DeltaE.getDeltaE00(
             { L: rgbToLab(columnValues['One'])[0], A: rgbToLab(columnValues['One'])[1], B: rgbToLab(columnValues['One'])[2] },
@@ -81,22 +75,18 @@ function organiseColors() {
             { L: rgbToLab(columnValues['Three'])[0], A: rgbToLab(columnValues['Three'])[1], B: rgbToLab(columnValues['Three'])[2] },
             { L: rgbToLab(columnValues['Four'])[0], A: rgbToLab(columnValues['Four'])[1], B: rgbToLab(columnValues['Four'])[2] }),
     };
-    // console.log(relationshipArray);
     var orderedDistances = sortColors2(relationshipArray);
-    // console.log(orderedDistances);
     var order = shortestPath(orderedDistances);
-    console.log(order);
     var colorsToSet = {};
     for (let i in [0, 1, 2, 3]) colorsToSet[order[i]] = columnValues[order[i]];
-    console.log(colorsToSet);
     setColors(colorsToSet);
+    url.searchParams.append(columnValues['One'], columnValues['Two'], columnValues['Three'], columnValues['Four'])
     localStorage.setItem('colors', columnValues['One'] + ';' + columnValues['Two'] + ';' + columnValues['Three'] + ';' + columnValues['Four']);
 }
 
 function newColors() {
     // current algorithm for finding satisfying colour combos.
     let unlockedColumns = Object.keys(columnValues).filter((column) => !lockedColumns.includes(column));
-    // if (lockedColumns.length > 0) var newStartingColour = colors.split(';')[Object.keys(columnValues).findIndex((column) => lockedColumns[0] == column)].split(',').map((value) => parseInt(value));
     if (lockedColumns.length > 0) var newStartingColour = columnValues[lockedColumns[0]];
     if (lockedColumns.length == 0) {
         columnValues['One'] = randomColor();
@@ -169,7 +159,7 @@ function newColors() {
 
 function sortColors2(colors) {
     colors = Object.entries(colors);
-    console.log(colors);
+    // console.log(colors);
     for (let i = 0; i < colors.length; i++) {
         for (let j = 0; j < colors.length - i - 1; j++) {
             if (colors[j + 1][1] < colors[j][1]) {
@@ -206,7 +196,7 @@ function shortestPath(sortedDistances) {
     var sortedDistancesObj = Object.fromEntries(sortedDistances);
     var possibles = [];
     var shortestPath = '';
-    console.log(sortedDistances[0][0]); 
+    // console.log(sortedDistances[0][0]); 
     switch (sortedDistances[0][0]) {
         case 'a':
             possibles = [sortedDistancesObj['b'], sortedDistancesObj['c'], sortedDistancesObj['d'], sortedDistancesObj['e']];
@@ -223,7 +213,6 @@ function shortestPath(sortedDistances) {
             return orderColumns('c', 'd', shortestPath);
         case 'd':
             possibles = [sortedDistancesObj['a'], sortedDistancesObj['b'], sortedDistancesObj['e'], sortedDistancesObj['f']];
-            console.log(sortedDistances.findIndex((element) => element[1] == Math.min(...possibles)));
             shortestPath = sortedDistances[sortedDistances.findIndex((element) => element[1] == Math.min(...possibles))][0];
             return orderColumns('d', 'c', shortestPath);
         case 'e':
@@ -252,7 +241,6 @@ function changeColumn(number, colorValue) {
 }
 
 function setColors(listNewColors) {
-    // listNewColors.forEach((newColor) => { console.log(typeof newColor); if (typeof newColor == 'object') if (typeof newColor == 'object')Object.keys(newColor)[0], Object.values(newColor)[0]) });
     for (let newColor in listNewColors) {
         if (typeof listNewColors[newColor] == 'object') changeColumn(newColor, listNewColors[newColor]);
     }
@@ -306,6 +294,7 @@ function changeClickedColour(xCoord, yCoord) {
     console.log(xCoord, yCoord)
     var rgb = randomColor();
     var coord;
+    let max = 0;
     if (matchMedia("(max-width: 700px)").matches) {
         coord = yCoord
         max = document.documentElement.clientHeight;
@@ -347,32 +336,22 @@ function validateHex(hex) {
 
 function lockColor(column) {
     let currentLock = eval('lock' + column);
-    // let currentColumn = eval('column' + column);
-    // let currentHex = eval('hex' + column);
-    let path = 'http://127.0.0.1:5500/';
-    // let path = 'https://fomastreeman.github.io/color-palette/';
+    let path = location.origin;
+    console.log(currentLock.src)
     if (currentLock.src == path + 'locked.png') {
         currentLock.src = path + 'unlocked.png';
         lockedColumns = lockedColumns.filter((item) => item != column);
-        // currentColumn.style.setProperty('background-color', 'var(--color)');
     } else {
         currentLock.src = path + 'locked.png';
         lockedColumns.push(column);
-        // currentColumn.style.setProperty('background-color', currentHex.value);
     }
 }
 
-// copied. so i annotate to show understanding
-// coudl be simplified by using a tag instead of button 
 function exportToJsonFile(jsonData) {
-    // turn object into string
     let dataStr = JSON.stringify(jsonData);
     let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
     let linkElement = document.createElement('a');
-    // the file to install
     linkElement.setAttribute('href', dataUri);
-    // download attribute specifies the href will be downloaded not be a new file to jump to
     linkElement.setAttribute('download', "data.json");
-    // clicks this element so the user doesnt need to do anything else
     linkElement.click();
 }
