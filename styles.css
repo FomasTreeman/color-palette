@@ -12,6 +12,16 @@ body * {
     font-family: font;
 }
 
+#navbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 56px;
+    background-color: azure;
+    opacity: 70%;
+}
+
 #title {
     position: fixed;
     margin: 0px;
@@ -64,12 +74,15 @@ input {
 }
 
 .inputContainer {
-    position: relative;
+    position: fixed;
 
 }
 
 .hexValue {
-    max-width: 25vw;
+    width: 23.5vw;
+    margin-inline: 0px;
+    padding-left: 1.5vw;
+    text-shadow: -1px -1px 0 #000;
 }
 
 .lock {
