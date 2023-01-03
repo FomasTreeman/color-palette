@@ -80,7 +80,7 @@ function organiseColors() {
     var colorsToSet = {};
     for (let i in [0, 1, 2, 3]) colorsToSet[order[i]] = columnValues[order[i]];
     setColors(colorsToSet);
-    url.searchParams.append(columnValues['One'], columnValues['Two'], columnValues['Three'], columnValues['Four'])
+    // url.searchParams.append(columnValues['One'], columnValues['Two'], columnValues['Three'], columnValues['Four'])
     localStorage.setItem('colors', columnValues['One'] + ';' + columnValues['Two'] + ';' + columnValues['Three'] + ';' + columnValues['Four']);
 }
 
@@ -337,12 +337,12 @@ function validateHex(hex) {
 function lockColor(column) {
     let currentLock = eval('lock' + column);
     let path = location.origin;
-    console.log(currentLock.src)
-    if (currentLock.src == path + 'locked.png') {
-        currentLock.src = path + 'unlocked.png';
+    console.log(currentLock.src, location.origin + '/locked.png');
+    if (currentLock.src == path + '/locked.png') {
+        currentLock.src = path + '/unlocked.png';
         lockedColumns = lockedColumns.filter((item) => item != column);
     } else {
-        currentLock.src = path + 'locked.png';
+        currentLock.src = path + '/locked.png';
         lockedColumns.push(column);
     }
 }
