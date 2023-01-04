@@ -4,6 +4,14 @@ document.addEventListener("dblclick", (event) => changeClickedColour(event.pageX
 
 const HEXCHARACTERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
 // const url = new URL('http://127.0.0.1:5500/index.html');
+// var history = [
+    // { 'One': [], 'Two': [], 'Three': [], 'Four': [] },
+//     {},
+//     {},
+//     {},
+//     {},
+//     {},m
+// ];
 var columnOne = document.getElementById("one");
 var columnTwo = document.getElementById("two");
 var columnThree = document.getElementById("three");
@@ -93,7 +101,7 @@ function newColors() {
         columnValues['Two'] = invertColour(columnValues['One']);
         columnValues['Three'] = similarColor(columnValues['Two']);
         columnValues['Four'] = similarColor(columnValues['Two']);
-        if (columnValues['Three'].reduce((acc, currentValue) => acc + currentValue) == columnValues['Four'].reduce((acc, currentValue) => acc + currentValue)) {
+        if (DeltaE.getDeltaE00(rgbToLab(columnValues['Three'][1]), rgbToLab(columnValues['Four'][1]) < 8)) {
             columnValues['Four'] = similarColor(columnValues['Two'])
         };
     } else if (lockedColumns.length == 1) {
@@ -170,7 +178,7 @@ function sortColors2(colors) {
     return colors;
 }
 
-function orderColumns(column, oppositeColumn, shortestPath) {
+function orderColumns(firstPath, oppositePath, shortestPath) {
     var order = [];
     var distanceKey = {
         'a': ['One', 'Two'],
@@ -180,15 +188,17 @@ function orderColumns(column, oppositeColumn, shortestPath) {
         'e': ['Two', 'Four'],
         'f': ['Three', 'Four']
     };
-    if (distanceKey[column][0] == distanceKey[shortestPath]) {
-        order.push(distanceKey[column][1]);
-        order.push(distanceKey[column][0]);
+    if (distanceKey[firstPath][0] == distanceKey[shortestPath][1]) {
+        order.push(distanceKey[firstPath][1]);
+        order.push(distanceKey[firstPath][0]);
+        order.push(distanceKey[shortestPath][0]);
+        order.push(distanceKey[oppositePath][0]);
     } else {
-        order.push(distanceKey[column][0]);
-        order.push(distanceKey[column][1]);
-    }
+        order.push(distanceKey[firstPath][0]);
+        order.push(distanceKey[firstPath][1]);
         order.push(distanceKey[shortestPath][1]);
-        distanceKey[shortestPath][1] == distanceKey[oppositeColumn][0] ? order.push(distanceKey[oppositeColumn][1]) : order.push(distanceKey[oppositeColumn][0]);
+        order.push(distanceKey[oppositePath][1]);
+    }
     return order;
     }
 
@@ -196,7 +206,7 @@ function shortestPath(sortedDistances) {
     var sortedDistancesObj = Object.fromEntries(sortedDistances);
     var possibles = [];
     var shortestPath = '';
-    // console.log(sortedDistances[0][0]); 
+    console.log(sortedDistances); 
     switch (sortedDistances[0][0]) {
         case 'a':
             possibles = [sortedDistancesObj['b'], sortedDistancesObj['c'], sortedDistancesObj['d'], sortedDistancesObj['e']];
@@ -264,18 +274,16 @@ function getRgbValue(hex) {
 }
 
 function similarColor(rgb) {
-    var colorChange = Math.floor(Math.random() * 125 + 70);
     var negOrPos = Math.random() < 0.5 ? -1 : 1;
+    let randomIndex = Math.floor(Math.random() * 3);
+    let maxValue = 0;
+    let minValue = 0;
+    negOrPos == -1 ? maxValue = rgb[randomIndex] : maxValue = 255 - rgb[randomIndex];
+    maxValue > 100 ? minValue = 100 : minValue = Math.floor(maxValue / 75);
+    var colorChange = minValue + Math.floor(Math.random() * (maxValue - minValue));
     colorChange *= negOrPos;
-    var randomIndex = Math.floor(Math.random() * 3);
-    var tempRgb = rgb.map(x => x);
-    if ((rgb[randomIndex] + colorChange) < 0) {
-        tempRgb[randomIndex] = 0;
-    } else if ((rgb[randomIndex] + colorChange) > 255) {
-        tempRgb[randomIndex] = 255;
-    } else {
-        tempRgb[randomIndex] += colorChange;
-    }
+    let tempRgb = rgb.map(x => x);
+    tempRgb[randomIndex] += colorChange;
     return tempRgb;
 }
 
@@ -337,7 +345,6 @@ function validateHex(hex) {
 function lockColor(column) {
     let currentLock = eval('lock' + column);
     let path = location.origin;
-    console.log(currentLock.src, location.origin + '/locked.png');
     if (currentLock.src == path + '/locked.png') {
         currentLock.src = path + '/unlocked.png';
         lockedColumns = lockedColumns.filter((item) => item != column);

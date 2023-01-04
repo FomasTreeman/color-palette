@@ -10,7 +10,12 @@
 </head>
 
 <body>
-    <div id=navbar></div>
+    <div id='navbar'>
+        <input id="back" type="image" src="backward.png" onclick="alert('work in progress')">
+        <input id="forward" type="image" src="forward.png" onclick="alert('work in progress')">
+        <input id="add" type="image" src="add.png" onclick="alert('work in progress')">
+    </div>
+    <div id='colorInfo'></div>
     <button id="title" onclick="newColors()">press space</button>
     <button id="save" onclick="exportToJsonFile(localStorage.getItem('colors').split(';'))"> save </button>
     <ul class=" container">

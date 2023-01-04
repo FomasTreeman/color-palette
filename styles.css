@@ -16,7 +16,21 @@ body * {
 
 #navbar {
     position: fixed;
-    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 5vh;
+    background-color: rgb(255, 255, 255);
+}
+
+#navbar * {
+    margin: 0px;
+    padding: 1vh;
+    max-height: calc(5vh - 2vh);
+}
+
+#colorInfo {
+    position: fixed;
     left: 0px;
     width: 100vw;
     height: 56px;
@@ -77,10 +91,10 @@ input {
 
 .inputContainer {
     position: fixed;
-
 }
 
 .hexValue {
+    position: relative;
     width: 23.5vw;
     margin-inline: 0px;
     padding-left: 1.5vw;
@@ -88,13 +102,11 @@ input {
 
 .lock {
     position: absolute;
-    top: 0px;
     right: 0px;
 }
 
 .colorPicker {
     position: absolute;
-    top: 0px;
     right: 35px;
     border-style:groove;
     border-color: black;
