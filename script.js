@@ -23,6 +23,7 @@ var hexFour = document.getElementById("hexValueFour");
 var columnValues = { 'One': [], 'Two': [], 'Three': [], 'Four': [] };
 var lockedColumns = [];
 var colors = localStorage.getItem('colors');
+var randomIndex;
 
 if (colors) {
     let i = 0;
@@ -93,6 +94,7 @@ function organiseColors() {
 }
 
 function newColors() {
+    // async await for while loop to find differing colours.
     // current algorithm for finding satisfying colour combos.
     let unlockedColumns = Object.keys(columnValues).filter((column) => !lockedColumns.includes(column));
     if (lockedColumns.length > 0) var newStartingColour = columnValues[lockedColumns[0]];
@@ -101,7 +103,7 @@ function newColors() {
         columnValues['Two'] = invertColour(columnValues['One']);
         columnValues['Three'] = similarColor(columnValues['Two']);
         columnValues['Four'] = similarColor(columnValues['Two']);
-        if (DeltaE.getDeltaE00(rgbToLab(columnValues['Three'][1]), rgbToLab(columnValues['Four'][1]) < 8)) {
+        while (DeltaE.getDeltaE00(rgbToLab(columnValues['Three'][1]), rgbToLab(columnValues['Four'][1]) < 8)) {
             columnValues['Four'] = similarColor(columnValues['Two'])
         };
     } else if (lockedColumns.length == 1) {
@@ -192,12 +194,17 @@ function orderColumns(firstPath, oppositePath, shortestPath) {
         order.push(distanceKey[firstPath][1]);
         order.push(distanceKey[firstPath][0]);
         order.push(distanceKey[shortestPath][0]);
-        order.push(distanceKey[oppositePath][0]);
+        if (distanceKey[oppositePath][0] == distanceKey[shortestPath[0]]) {
+            order.push(distanceKey[oppositePath][1]);
+        } else order.push(distanceKey[oppositePath][0]);
+
     } else {
         order.push(distanceKey[firstPath][0]);
         order.push(distanceKey[firstPath][1]);
         order.push(distanceKey[shortestPath][1]);
-        order.push(distanceKey[oppositePath][1]);
+        if (distanceKey[oppositePath][0] == distanceKey[shortestPath[0]]) {
+            order.push(distanceKey[oppositePath][1]);
+        } else order.push(distanceKey[oppositePath][0]);
     }
     return order;
     }
@@ -206,12 +213,11 @@ function shortestPath(sortedDistances) {
     var sortedDistancesObj = Object.fromEntries(sortedDistances);
     var possibles = [];
     var shortestPath = '';
-    console.log(sortedDistances); 
+    // console.log(sortedDistances); 
     switch (sortedDistances[0][0]) {
         case 'a':
             possibles = [sortedDistancesObj['b'], sortedDistancesObj['c'], sortedDistancesObj['d'], sortedDistancesObj['e']];
             shortestPath = sortedDistances[sortedDistances.findIndex((element) => element[1] == Math.min(...possibles))][0];
-            console.log(shortestPath)
             return orderColumns('a', 'f', shortestPath);
         case 'b':
             possibles = [sortedDistancesObj['a'], sortedDistancesObj['c'], sortedDistancesObj['d'], sortedDistancesObj['f']];
@@ -274,16 +280,28 @@ function getRgbValue(hex) {
 }
 
 function similarColor(rgb) {
-    var negOrPos = Math.random() < 0.5 ? -1 : 1;
-    let randomIndex = Math.floor(Math.random() * 3);
+    let negOrPos = Math.random() < 0.5 ? -1 : 1;
+    newIndex = Math.floor(Math.random() * 3);
+    if (randomIndex != newIndex) {
+        randomIndex = newIndex;
+    } else if (randomIndex == newIndex && newIndex != 1 ) {
+        randomIndex = 1; 
+    } else {
+        randomIndex = Math.random() < 0.5 ? 0 : 2;;
+    }
     let maxValue = 0;
-    let minValue = 0;
+    let minValue = 100;
     negOrPos == -1 ? maxValue = rgb[randomIndex] : maxValue = 255 - rgb[randomIndex];
-    maxValue > 100 ? minValue = 100 : minValue = Math.floor(maxValue / 75);
+    if (maxValue < 100) {
+        negOrPos *= -1;
+        negOrPos == -1 ? maxValue = rgb[randomIndex] : maxValue = 255 - rgb[randomIndex];
+    }
     var colorChange = minValue + Math.floor(Math.random() * (maxValue - minValue));
     colorChange *= negOrPos;
     let tempRgb = rgb.map(x => x);
     tempRgb[randomIndex] += colorChange;
+    previousIndex = randomIndex;
+    // console.log(colorChange, randomIndex);
     return tempRgb;
 }
 
